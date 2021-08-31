@@ -1,5 +1,15 @@
 from numpy import random
-import math
+from tabulate import tabulate
+
+def clone_list(lst):
+    new_list = []
+    for i in range(len(lst)):
+        new_list.append(lst[i])
+    return(new_list)
+
+def chunks(deck, n): #THIS FUNCTION DIVIDES THE DECK INTO CHUNKS, https://stackoverflow.com/questions/312443/how-do-you-split-a-list-into-evenly-sized-chunks
+    for i in range(0, len(deck), n):
+        yield(deck[i:i + n])
 
 def turn_cycle(player1_score, player2_score, player_turn, deck): 
     hidden_deck = deck
@@ -11,39 +21,22 @@ def turn_cycle(player1_score, player2_score, player_turn, deck):
 
 def create_deck(card_number):
     new_deck = []
-    table = []
-
     if card_number == 1:
-        columns = 2
+        columns = 1
     elif card_number == 2:
-        columns = 4
+        columns = 2
     elif card_number == 3:
-        columns = 6
-    elif card_number == 4:
-        columns = 8
+        columns = 3
     else:
-        columns = 8
-
-    if (card_number*2) % columns == 0:
-        carry = 0
-    else:
-        carry = 1
+        columns = 4
 
     for card in range(card_number):
         new_deck.append(card + 1)
         new_deck.append(card + 1)
     random.shuffle(new_deck)
+    return(list(chunks(new_deck, columns)))
 
-    for i in range(columns + 1):
-        table.append([])
-
-    table[0] = " ҉"
-    for i in range(columns + carry):
-        for j in range(round(card_number / columns)):
-            table[i].append(new_deck[i])
-
-    print(table)
-    return(new_deck)
+########################################################################################
 
 card_number = int(input("Welcome to MEMORIZE! Type the number of cards for each player: "))
 player1_score, player2_score = 0, 0
@@ -51,4 +44,18 @@ player_turn = 1
 print("")
 print("----------------==NEW GAME==-----------------")
 new_deck = create_deck(card_number)
+
+for i in range(len(new_deck)):
+    new_deck[i].insert(0,i)
+
+new_deck_hidden = clone_list(new_deck)
+
+for i in range(len(new_deck_hidden)):
+    for j in range(len(new_deck_hidden[i])):
+        new_deck_hidden[i][j] = " ҉"
+
 print(new_deck)
+print(new_deck_hidden)
+
+print(tabulate(new_deck,[0,1,2,3]))
+
